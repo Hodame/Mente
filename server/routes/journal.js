@@ -37,7 +37,7 @@ router.post('/create', async (req, res) => {
 
 	try {
 		const createdNote = await note.save()
-		
+
 		res.json(createdNote)
 	} catch (error) {
 		res.json(error)
@@ -53,15 +53,21 @@ router.put('/:note', async (req, res) => {
 			return res.status(404).json({ message: "note not found" })
 		}
 
-		const note = await noteSheme.findByIdAndUpdate(post._id, post, { new: true})
-		return res.json({note: note})
+		const note = await noteSheme.findByIdAndUpdate(post._id, post, { new: true })
+		return res.json({ note: note })
 	} catch (error) {
 		res.status(500).json(error)
 	}
 })
 
 // DELETE A NOTE
-router.delete('/:note', (req, res) => {
+router.delete('/:note', async (req, res) => {
+	try {
+		await noteSheme.findByIdAndDelete(req.params.note)
+		return res.json({ message: 'Deleted!' })
+	} catch (error) {
+		res.status(500).json(error)
+	}
 })
 
 export default router
