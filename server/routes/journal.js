@@ -4,31 +4,60 @@ import noteSheme from "../models/Note.js";
 const router = new Router()
 
 // GET ALL USER'S NOTES
-router.get('/notes', (req, res) => {
-	res.send('all notes')
+router.get('/notes', async (req, res) => {
+	try {
+		const notes = await noteSheme.find()
+		return res.json(notes)
+	} catch (error) {
+		res.status(500).json(error)
+	}
 })
 
 // GET ONE NOTE
-router.get('/:note', (req, res) => {
+router.get('/:id', async (req, res) => {
+	try {
+		if (!req.params.id) {
+			return res.status(404).json({ message: "note not found" })
+		}
+
+		const note = await noteSheme.findById(req.params.id)
+		return res.json(note)
+	} catch (error) {
+		res.status(500).json(error)
+	}
 })
 
 // CREATE A NOTE
 router.post('/create', async (req, res) => {
 	const note = new noteSheme({
-		title: req.body.noteTitle,
-		content: req.body.noteContent,
-		lastEdited: req.body.noteLastEdited
+		noteTitle: req.body.noteTitle,
+		noteContent: req.body.noteContent,
+		noteDate: req.body.noteDate,
 	})
+
 	try {
 		const createdNote = await note.save()
-		res.send(createdNote)
+		
+		res.json(createdNote)
 	} catch (error) {
-		res.send(error)
+		res.json(error)
 	}
 })
 
 // UPDATE A NOTE
-router.patch('/:note', (req, res) => {
+router.put('/:note', async (req, res) => {
+	try {
+		const post = req.body
+
+		if (!post._id) {
+			return res.status(404).json({ message: "note not found" })
+		}
+
+		const note = await noteSheme.findByIdAndUpdate(post._id, post, { new: true})
+		return res.json({note: note})
+	} catch (error) {
+		res.status(500).json(error)
+	}
 })
 
 // DELETE A NOTE

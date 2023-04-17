@@ -1,18 +1,21 @@
 import mongoose from "mongoose";
 
 const noteSheme = mongoose.Schema({
-	title: {
+	noteTitle: {
 		type: String,
 	},
-	content: {
+	noteContent: {
 		type: String,
 		required: true,
 		min: 3
 	},
-	lastEdited: {
-		type: String,
-		default: new Date().now
+	noteDate: {
+		type: String
+	},
+	noteLifeTime: {
+		type: Number,
+		default: Date.now
 	}
 })
 
-export default mongoose.model('userNote', noteSheme)
+export default mongoose.model('UserNote', noteSheme)
